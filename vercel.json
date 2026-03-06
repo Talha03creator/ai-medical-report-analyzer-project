@@ -1,4 +1,5 @@
 {
+  "buildCommand": "./build.sh",
   "builds": [
     {
       "src": "api/index.py",
