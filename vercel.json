@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "api/index.py",
+      "src": "app/main.py",
       "use": "@vercel/python",
       "config": {
         "runtime": "python3.11"
@@ -12,30 +12,26 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "api/index.py"
+      "source": "/api/(.*)",
+      "destination": "/app/main.py"
     },
     {
-      "src": "/docs",
-      "dest": "api/index.py"
+      "source": "/docs",
+      "destination": "/app/main.py"
     },
     {
-      "src": "/redoc",
-      "dest": "api/index.py"
+      "source": "/openapi.json",
+      "destination": "/app/main.py"
     },
     {
-      "src": "/openapi.json",
-      "dest": "api/index.py"
+      "source": "/(.*\\.(css|js|html|ico|png|jpg|svg))",
+      "destination": "/frontend/$1"
     },
     {
-      "src": "/(.*\\.(css|js|html|ico|png|jpg|svg))",
-      "dest": "frontend/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend/index.html"
+      "source": "/(.*)",
+      "destination": "/frontend/index.html"
     }
   ]
 }
