@@ -38,8 +38,10 @@ class Settings(BaseSettings):
     port: int = 8000
 
     # ── Database ───────────────────────────────────────────────────
-    database_url: str = "postgresql+asyncpg://postgres:password@localhost:5432/medical_analyzer"
-    database_sync_url: str = "postgresql://postgres:password@localhost:5432/medical_analyzer"
+    # Default: in-memory SQLite (serverless-safe). Override with DATABASE_URL env var
+    # for hosted PostgreSQL (e.g., Supabase, Neon).
+    database_url: str = "sqlite+aiosqlite:///:memory:"
+    database_sync_url: str = "sqlite:///:memory:"
 
     # ── AI Configuration ───────────────────────────────────────────
     medical_ai_api_key: str = ""
@@ -65,7 +67,7 @@ class Settings(BaseSettings):
     allowed_extensions: str = "txt,pdf"
 
     # ── CORS ───────────────────────────────────────────────────────
-    cors_origins: str = "http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000"
+    cors_origins: str = "http://localhost:3000,http://localhost:8000,http://127.0.0.1:8000,https://*.vercel.app"
 
     # ── Logging ────────────────────────────────────────────────────
     log_level: str = "INFO"

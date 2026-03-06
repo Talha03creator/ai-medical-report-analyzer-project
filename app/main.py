@@ -1,9 +1,3 @@
-"""
-FastAPI Application Entry Point
-AI Medical Report Analyzer
-
-Production-grade medical transcription analysis system.
-"""
 
 import logging
 import sys
@@ -14,11 +8,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
+
 # Force UTF-8 on Windows console to avoid emoji encoding crashes
-if sys.platform == "win32":
+# Guard: only on Windows AND only when stdout has a .buffer (not in serverless)
+if sys.platform == "win32" and hasattr(sys.stdout, "buffer"):
     import io
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    try:
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    except Exception:
+        pass  # Serverless or CI environment — skip safely
 
 from app.core.config import settings
 from app.core.logging_config import configure_logging
@@ -28,7 +27,7 @@ from app.api.middleware.logging_middleware import LoggingMiddleware
 from app.api.routes import reports, health
 from app.services.ai_service import ai_service
 
-# Configure logging before anything else
+
 configure_logging()
 logger = logging.getLogger(__name__)
 

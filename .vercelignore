@@ -1,0 +1,33 @@
+# Database files
+medical_analyzer.db
+*.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment files (secrets go in Vercel dashboard)
+.env
+.env.*
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Alembic migrations (not needed in serverless)
+alembic/
+alembic.ini
+
+# Development scripts
+scripts/
+test_*.py
+
+# Git
+.git/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+Thumbs.db

@@ -2,7 +2,8 @@
 Database Configuration & Session Management
 AI Medical Report Analyzer
 
-Async SQLAlchemy setup - supports both PostgreSQL and SQLite (for local dev).
+Async SQLAlchemy setup - supports both PostgreSQL and SQLite.
+Serverless-compatible: uses NullPool for non-SQLite to avoid stale connections.
 """
 
 from sqlalchemy.ext.asyncio import (
@@ -10,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
 )
+from sqlalchemy.pool import NullPool, StaticPool
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import text
 from typing import AsyncGenerator
@@ -22,21 +24,31 @@ logger = logging.getLogger(__name__)
 # ── Detect DB type ─────────────────────────────────────────────────
 _is_sqlite = settings.database_url.startswith("sqlite")
 
-# ── Engine ─────────────────────────────────────────────────────────
-if _is_sqlite:
+# ── Engine (serverless-safe) ───────────────────────────────────────
+try:
+    if _is_sqlite:
+        engine = create_async_engine(
+            settings.database_url,
+            echo=settings.debug,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,  # single connection for SQLite
+        )
+    else:
+        # NullPool: no persistent connections — ideal for serverless
+        engine = create_async_engine(
+            settings.database_url,
+            echo=settings.debug,
+            poolclass=NullPool,
+            pool_pre_ping=True,
+        )
+except Exception as e:
+    logger.warning(f"Database engine creation failed: {e}")
+    # Fallback to in-memory SQLite so the app can at least start
     engine = create_async_engine(
-        settings.database_url,
-        echo=settings.debug,
+        "sqlite+aiosqlite:///:memory:",
+        echo=False,
         connect_args={"check_same_thread": False},
-    )
-else:
-    engine = create_async_engine(
-        settings.database_url,
-        echo=settings.debug,
-        pool_size=10,
-        max_overflow=20,
-        pool_pre_ping=True,
-        pool_recycle=3600,
+        poolclass=StaticPool,
     )
 
 # ── Session Factory ────────────────────────────────────────────────
