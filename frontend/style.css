@@ -301,6 +301,33 @@ body {
   }
 }
 
+.linkedin-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #0a66c2;
+  color: #ffffff;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.linkedin-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.linkedin-btn:hover {
+  background: #004182;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 102, 194, 0.3);
+}
+
 .disclaimer-mini {
   font-size: 0.68rem;
   color: var(--text-muted);
