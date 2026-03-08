@@ -45,7 +45,7 @@ class Settings(BaseSettings):
 
     # ── AI Configuration ───────────────────────────────────────────
     medical_ai_api_key: str = ""
-    ai_model: str = "gpt-4o-mini"
+    ai_model: str = "gemini-2.5-flash"
     ai_temperature: float = 0.2
     ai_max_tokens: int = 4096
     ai_base_url: Optional[str] = None
