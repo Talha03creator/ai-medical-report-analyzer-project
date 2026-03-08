@@ -26,15 +26,19 @@ ANALYSIS_PROMPT = """You are a medical document analyst. Extract structured info
 
 CRITICAL: Return ONLY a valid JSON object. No markdown, no code fences, no explanations.
 
-Required JSON structure (keep very brief):
+Required JSON structure:
 {{
-  "patient_info": {{"age": "", "gender": ""}},
-  "symptoms": [""],
-  "medications": [""],
-  "procedures": [""],
-  "risk_flags": [""],
-  "clinical_impression": "",
-  "professional_summary": "",
+  "patient_info": {{"age": "string or null", "gender": "string or null"}},
+  "symptoms": ["list of symptoms"],
+  "medications": ["list of medications and dosages"],
+  "procedures": ["list of procedures or tests"],
+  "lab_values": ["list of lab results with values"],
+  "body_parts": ["list of body parts mentioned"],
+  "clinical_impression": "brief clinical summary or null",
+  "risk_flags": ["critical conditions, urgent findings"],
+  "specialty_classification": "medical specialty or null",
+  "professional_summary": "2-3 sentence professional clinical summary",
+  "patient_friendly_summary": "2-3 sentence plain-language explanation",
   "confidence_score": 0.85
 }}
 
@@ -127,10 +131,10 @@ class GeminiAIService:
         config = types.GenerateContentConfig(
             temperature=float(getattr(settings, "ai_temperature", 0.2)),
             top_p=0.8,
-            max_output_tokens=1024, # Reduced for speed
+            max_output_tokens=4096,
         )
 
-        for attempt in range(1): # No retries on Vercel to avoid >10s timeout
+        for attempt in range(2):
             try:
                 logger.info("Gemini call attempt %d", attempt + 1)
                 response = await asyncio.wait_for(
@@ -139,7 +143,7 @@ class GeminiAIService:
                         contents=prompt,
                         config=config,
                     ),
-                    timeout=8.0, # Stop at 8s before Vercel kills us at 10s
+                    timeout=50.0, # Stop at 50s before Vercel kills us at 60s
                 )
                 raw = getattr(response, "text", "") or ""
                 logger.info("Gemini response received (%d chars)", len(raw))
@@ -164,7 +168,7 @@ class GeminiAIService:
 
     # ── Chunking ─────────────────────────────────────────────────
     @staticmethod
-    def _chunk_text(text: str, max_chars: int = 2500) -> list[str]:
+    def _chunk_text(text: str, max_chars: int = 4000) -> list[str]:
         if len(text) <= max_chars:
             return [text]
         sentences = re.split(r'(?<=[.!?])\s+', text)
