@@ -54,9 +54,11 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
 
-  /* Shadows for Light Theme (Softer, dropping downwards) */
+  /* Shadows for Light Theme (Softer, dropping downwards with neon effects) */
   --shadow-glass: 0 4px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  --shadow-glow: 0 10px 30px rgba(14, 165, 233, 0.15);
+  --shadow-neon-cyan: 0 0 15px rgba(14, 165, 233, 0.4), 0 0 30px rgba(14, 165, 233, 0.2);
+  --shadow-neon-violet: 0 0 15px rgba(79, 70, 229, 0.4), 0 0 30px rgba(79, 70, 229, 0.2);
+  --shadow-neon-emerald: 0 0 15px rgba(16, 185, 129, 0.4), 0 0 30px rgba(16, 185, 129, 0.2);
   --shadow-card: 0 15px 35px rgba(15, 23, 42, 0.1);
 
   /* Smooth Transitions */
@@ -448,11 +450,11 @@ body {
 }
 
 .glass-card:hover {
-  border-color: rgba(14, 165, 233, 0.3);
+  border-color: rgba(14, 165, 233, 0.4);
   /* Teal border on hover */
   transform: translateY(-4px);
   /* Lift up effect */
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), var(--shadow-neon-cyan);
 }
 
 /* ── 3D Tilt Card Effect ──────────────────────────────────────── */
@@ -464,7 +466,7 @@ body {
 }
 
 .tilt-card:hover {
-  box-shadow: var(--shadow-card), var(--shadow-glow);
+  box-shadow: var(--shadow-card), var(--shadow-neon-cyan);
 }
 
 /* ── Upload Section ───────────────────────────────────────────── */
@@ -499,12 +501,14 @@ body {
   background: rgba(14, 165, 233, 0.05);
   /* Soft teal fill */
   transform: translateY(-2px);
+  box-shadow: inset 0 0 20px rgba(14, 165, 233, 0.1), var(--shadow-neon-cyan);
 }
 
 .upload-zone.dragging {
-  border-color: var(--accent-cyan);
-  background: rgba(14, 165, 233, 0.1);
+  border-color: var(--accent-violet);
+  background: rgba(79, 70, 229, 0.1);
   transform: scale(1.02);
+  box-shadow: inset 0 0 30px rgba(79, 70, 229, 0.2), var(--shadow-neon-violet);
 }
 
 .upload-icon-wrapper {
@@ -584,7 +588,7 @@ body {
 
 .btn-primary:hover {
   filter: brightness(1.1);
-  box-shadow: 0 6px 28px rgba(99, 102, 241, 0.45);
+  box-shadow: var(--shadow-neon-violet);
   transform: translateY(-1px);
 }
 
@@ -596,6 +600,7 @@ body {
 
 .btn-success:hover {
   filter: brightness(1.1);
+  box-shadow: var(--shadow-neon-emerald);
   transform: translateY(-1px);
 }
 
